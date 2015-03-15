@@ -63,4 +63,5 @@ dependencies {
     }
 
     compile 'com.facebook.rebound:rebound:0.3.6'
+    compile 'com.github.kevinsawicki:http-request:6.0'
 }
