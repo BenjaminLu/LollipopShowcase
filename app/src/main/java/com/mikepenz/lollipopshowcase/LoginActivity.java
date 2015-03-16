@@ -1,8 +1,10 @@
 package com.mikepenz.lollipopshowcase;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -27,6 +29,7 @@ import java.util.Map;
 
 public class LoginActivity extends ActionBarActivity
 {
+    public static final String KEY = "com.mikepenz.lollipopshowcase";
     private EditText emailET;
     private EditText passwordET;
     private Button loginBtn;
@@ -36,6 +39,15 @@ public class LoginActivity extends ActionBarActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        SharedPreferences sp = getApplication().getSharedPreferences(KEY, Context.MODE_PRIVATE);
+        String email = sp.getString("email",null);
+        String password = sp.getString("password",null);
+
+        if(email != null && password != null) {
+            new LoginAsyncTask().execute(email, password);
+        }
+
         title = (TextView) findViewById(R.id.title);
         emailET = (EditText) findViewById(R.id.email);
         passwordET = (EditText) findViewById(R.id.password);
@@ -45,7 +57,7 @@ public class LoginActivity extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                new LoginAsyncTask().execute();
+                new LoginAsyncTask().execute(emailET.getText().toString(), passwordET.getText().toString());
             }
         });
         Animation titleAnimation = AnimationUtils.loadAnimation(this,R.anim.login_title_anim);
@@ -56,15 +68,18 @@ public class LoginActivity extends ActionBarActivity
         title.startAnimation(titleAnimation);
     }
 
-    class LoginAsyncTask extends AsyncTask<Void, Void, Boolean>
+    class LoginAsyncTask extends AsyncTask<String, Void, Boolean>
     {
         JSONObject responseJson;
+        String email;
+        String password;
+
         @Override
-        protected Boolean doInBackground(Void... params)
+        protected Boolean doInBackground(String... params)
         {
             boolean isSuccessful = false;
-            String email = emailET.getText().toString();
-            String password = passwordET.getText().toString();
+            email = params[0];
+            password = params[1];
 
             if(email.equals("") || password.equals("")) {
                 return false;
@@ -92,8 +107,15 @@ public class LoginActivity extends ActionBarActivity
         protected void onPostExecute(Boolean isSuccessful)
         {
             if (isSuccessful.booleanValue()) {
+                SharedPreferences sp = getApplication().getSharedPreferences(KEY, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.clear();
+                editor.putString("email", email);
+                editor.putString("password", password);
+                editor.apply();
                 Intent i = new Intent(LoginActivity.this,MainActivity.class);
                 startActivity(i);
+                finish();
             } else {
                 try {
                     if(responseJson == null) {

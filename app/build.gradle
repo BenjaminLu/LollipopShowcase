@@ -50,18 +50,16 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:support-v4:21.0.3"
-    compile "com.android.support:appcompat-v7:21.0.3"
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'com.android.support:cardview-v7:21.0.3'
-
     compile 'com.nispok:snackbar:2.7.3'
-
     compile 'com.mikepenz.iconics:library:0.7.0@aar'
     compile('com.mikepenz.aboutlibraries:library:4.5.0@aar') {
         transitive = true
     }
-
     compile 'com.facebook.rebound:rebound:0.3.6'
     compile 'com.github.kevinsawicki:http-request:6.0'
+    compile files('libs/thep-0.2.jar')
 }
